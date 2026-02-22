@@ -1,0 +1,64 @@
+go run ./cmd/loader \
+		-project simplifymycloud-dev \
+		-dataset cell_network_poc \
+		-input data/metrics.ndjson \
+		-mode gcs \
+		-bucket simplifymycloud-dev-bq-poc-staging \
+		-skip-sharded
+{"severity":"INFO","message":"loader starting","logging.googleapis.com/labels":{"component":"loader"},"fields":{"bucket":"simplifymycloud-dev-bq-poc-staging","dataset":"cell_network_poc","input":"data/metrics.ndjson","mode":"gcs","project":"simplifymycloud-dev","skip_sharded":true}}
+{"severity":"INFO","message":"using GCS staging mode (upload to GCS → BQ load job)","logging.googleapis.com/labels":{"component":"loader"}}
+{"severity":"INFO","message":"reading and splitting NDJSON by strategy","logging.googleapis.com/labels":{"component":"loader"},"fields":{"input":"data/metrics.ndjson"}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":1000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":2000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":3000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":4000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":5000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":6000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":7000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":8000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":9000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":10000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":11000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":12000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":13000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":14000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":15000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":16000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":17000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":18000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":19000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":20000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":21000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":22000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":23000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":24000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":25000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":26000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":27000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":28000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":29000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":30000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":31000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":32000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":33000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":34000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":35000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":36000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":37000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":38000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":39000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":40000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":41000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":42000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":43000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":44000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":45000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":46000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":47000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":48000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":49000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":50000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":51000000}}
+{"severity":"INFO","message":"split progress","logging.googleapis.com/labels":{"component":"loader"},"fields":{"rows_processed":52000000}}
+{"severity":"INFO","message":"split complete","logging.googleapis.com/labels":{"component":"loader"},"fields":{"duration":"7m52.400429083s","strategy_c_rows":15000000,"total_rows":52560000}}
+{"severity":"INFO","message":"uploading to GCS","logging.googleapis.com/labels":{"component":"loader"},"fields":{"gcs_path":"gs://simplifymycloud-dev-bq-poc-staging/staging/20260221-135848/strategy_a.ndjson","rows":52560000,"strategy":"A: Hourly Partition"}}
