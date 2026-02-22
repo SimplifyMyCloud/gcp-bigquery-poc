@@ -46,6 +46,20 @@ Bytes scanned per query (lower = cheaper):
 
 4. **Do not use sharded tables (Strategy D)**. Legacy anti-pattern that creates thousands of tables and breaks BQ's optimizer.
 
+## BigQuery Limits We Discovered
+
+These are hard limits we hit during this POC — not quotas, not adjustable. Plan for them.
+
+| Limit | Value | Impact | How We Hit It |
+|-------|-------|--------|---------------|
+| Max partitions per table | **10,000** | 15-min partitions can only hold ~104 days; hourly holds ~13.7 months; daily holds ~27 years | Strategy C exceeded this with a full year of 15-min intervals (35,040 needed) |
+| Max partitions per DML statement | **4,000** | A single INSERT can't span a full year of hourly partitions (8,760) | Had to chunk Strategy A inserts into 3 batches (Jan–Apr, May–Aug, Sep–Dec) |
+| Minimum time-unit partition granularity | **HOUR** | No native 5-min, 10-min, or 15-min time partitions exist | Drove the entire need for this POC — forced us to evaluate workarounds |
+| Cannot alter partition spec on existing table | N/A | Must drop and recreate the table to change partitioning | Terraform `apply` failed; had to `taint` and recreate the Strategy C table |
+| Query cache hides bytes scanned | N/A | Repeated identical queries report 0 bytes scanned from cache | All benchmark runs showed 0.00 MB until we set `DisableQueryCache = true` |
+| BQ load job via resumable upload API | ~10 Mbps effective | 13 GB upload took 2+ hours and never completed | Switched to server-side SQL generation — 52M rows in ~6 minutes |
+| Streaming buffer delays | ~90 min | Data loaded via streaming inserts reports 0 bytes scanned until buffer flushes | First benchmark attempt showed all zeros; switched to load job mode |
+
 ## Best Practices for BigQuery Partitioning
 
 Based on what this POC uncovered:
@@ -53,8 +67,9 @@ Based on what this POC uncovered:
 - **Partition for retention management, cluster for query pruning.** Partitions define the coarsest data boundaries; clustering provides fine-grained block-level pruning within those boundaries. They serve different purposes.
 - **Always cluster on your most common filter columns.** Put the highest-cardinality filter first (often `timestamp`), followed by the next most selective columns (`cell_id`, `region_id`).
 - **Keep partitions below the 10,000 limit with headroom.** Hourly partitions give ~13.7 months; daily gives ~27 years. Plan for your retention requirement plus growth.
+- **Budget for the 4,000 partition DML limit.** A single INSERT/UPDATE/DELETE can only touch 4,000 partitions. For bulk loads into hourly-partitioned tables, chunk your data into ~4-month time ranges.
 - **Disable query cache when benchmarking.** BQ caches results by default — repeated queries report 0 bytes scanned unless you set `DisableQueryCache = true`.
-- **Use DML partition limits wisely.** A single INSERT/UPDATE/DELETE can only touch 4,000 partitions. For bulk loads into hourly-partitioned tables, chunk your data by time range.
+- **Prefer load jobs over streaming inserts for analytics.** Streaming inserts land in a buffer where bytes scanned reports as 0 for up to 90 minutes. Load jobs write directly to columnar storage.
 - **Generate test data server-side when possible.** For large datasets, use `GENERATE_TIMESTAMP_ARRAY` with `CROSS JOIN` to create data directly in BQ — avoids upload bottlenecks entirely.
 
 Full benchmark data and analysis: [FINDINGS.md](FINDINGS.md)
