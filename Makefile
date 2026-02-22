@@ -3,6 +3,7 @@
 PROJECT_ID  ?= simplifymycloud-dev
 DATASET_ID  ?= cell_network_poc
 REGION      ?= us-west1
+BUCKET      ?= simplifymycloud-dev-bq-poc-staging
 DATA_DIR    := data
 DATA_FILE   := $(DATA_DIR)/metrics.ndjson
 
@@ -17,13 +18,13 @@ plan: ## Terraform plan
 		-var="region=$(REGION)" \
 		-var="dataset_id=$(DATASET_ID)"
 
-apply: ## Terraform apply (creates BQ dataset + tables)
+apply: ## Terraform apply (creates BQ dataset + tables + GCS staging bucket)
 	cd terraform && terraform apply -auto-approve \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="region=$(REGION)" \
 		-var="dataset_id=$(DATASET_ID)"
 
-destroy: ## Terraform destroy (removes all BQ resources)
+destroy: ## Terraform destroy (removes all BQ resources + GCS bucket)
 	cd terraform && terraform destroy -auto-approve \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="region=$(REGION)" \
@@ -43,7 +44,38 @@ generate-small: ## Generate small dataset for quick testing (3 days × 50 cells)
 	@mkdir -p $(DATA_DIR)
 	go run ./cmd/datagen -output $(DATA_FILE) -days 3 -cells 50
 
-load: ## Load via BQ load job (recommended — data goes to columnar storage immediately)
+load-bq: ## Generate + load data directly in BQ via SQL (fastest — no upload needed!)
+	@echo "=== Generating 52M rows directly in BigQuery ==="
+	@echo "--- Strategy A: Truncate ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/01a_truncate_a.sql
+	@echo "--- Strategy A: Jan-Apr (~17.3M rows) ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/01b_load_a_jan_apr.sql
+	@echo "--- Strategy A: May-Aug (~17.7M rows) ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/01c_load_a_may_aug.sql
+	@echo "--- Strategy A: Sep-Dec (~17.6M rows) ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/01d_load_a_sep_dec.sql
+	@echo "--- Strategy B: Daily+15min Cluster (copy from A) ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/02_load_strategy_b.sql
+	@echo "--- Strategy C: Truncate ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/03a_truncate_c.sql
+	@echo "--- Strategy C: Mar-Apr (~5M rows) ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/03b_load_c_mar_apr.sql
+	@echo "--- Strategy C: Apr-May (~5M rows) ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/03c_load_c_apr_may.sql
+	@echo "--- Strategy C: May-Jun (~5M rows) ---"
+	bq query --project_id=$(PROJECT_ID) --use_legacy_sql=false --max_rows=0 < sql/03d_load_c_may_jun.sql
+	@echo "=== All strategies loaded! ==="
+
+load: ## Load via GCS staging bucket (recommended — fastest for large datasets)
+	go run ./cmd/loader \
+		-project $(PROJECT_ID) \
+		-dataset $(DATASET_ID) \
+		-input $(DATA_FILE) \
+		-mode gcs \
+		-bucket $(BUCKET) \
+		-skip-sharded
+
+load-direct: ## Load via BQ load job direct upload (slower — bottlenecked by upload bandwidth)
 	go run ./cmd/loader \
 		-project $(PROJECT_ID) \
 		-dataset $(DATASET_ID) \
@@ -51,12 +83,13 @@ load: ## Load via BQ load job (recommended — data goes to columnar storage imm
 		-mode load \
 		-skip-sharded
 
-load-all: ## Load all strategies including sharded tables (Strategy D)
+load-all: ## Load all strategies including sharded tables (Strategy D) via GCS
 	go run ./cmd/loader \
 		-project $(PROJECT_ID) \
 		-dataset $(DATASET_ID) \
 		-input $(DATA_FILE) \
-		-mode load
+		-mode gcs \
+		-bucket $(BUCKET)
 
 load-stream: ## Load via streaming insert (data enters buffer — bytes scanned may show 0)
 	go run ./cmd/loader \

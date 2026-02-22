@@ -21,3 +21,9 @@ variable "table_expiration_ms" {
   type        = number
   default     = 2592000000 # 30 days
 }
+
+variable "staging_bucket_name" {
+  description = "GCS bucket for staging NDJSON before BQ load jobs"
+  type        = string
+  default     = "simplifymycloud-dev-bq-poc-staging"
+}

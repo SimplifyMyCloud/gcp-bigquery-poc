@@ -22,3 +22,8 @@ output "table_15min_int_range" {
   description = "Strategy C: Integer-range 15-min partitioned table ID"
   value       = google_bigquery_table.metrics_15min_int_range.table_id
 }
+
+output "staging_bucket" {
+  description = "GCS staging bucket for BQ load jobs"
+  value       = google_storage_bucket.staging.name
+}
